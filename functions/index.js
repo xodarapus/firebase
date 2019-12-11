@@ -30,6 +30,12 @@ exports.version = functions.https.onRequest(async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.end("" + version);
 });
+exports.syncProfile = functions.https.onRequest(async (req, res) => {
+    
+  res.header("Access-Control-Allow-Origin", "*");
+  admin.database().ref('/profile').push(req.body);
+  res.end("DATA Written: " + JSON.stringify(req.body));
+});
   /*exports.makeUppercase = functions.database.ref('/messages/{pushId}/original')
   .onCreate((snapshot, context) => {
     // Grab the current value of what was written to the Realtime Database.
