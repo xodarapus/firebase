@@ -32,9 +32,54 @@ exports.version = functions.https.onRequest(async (req, res) => {
 });
 exports.syncProfile = functions.https.onRequest(async (req, res) => {
     
-  res.header("Access-Control-Allow-Origin", "*");
-  admin.database().ref('/profile').push(req.body);
-  res.end("DATA Written: " + JSON.stringify(req.body));
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Headers", "content-type");
+  if (req.method === "OPTIONS"){
+    res.end();
+    return;
+  }
+  
+  //profile = JSON.parse(req.body);
+  console.log("BODY : " + JSON.stringify(req.body));  
+  ref = admin.database().ref('/users/' + req.body.id );
+  var value = {id:req.body.id,    
+    avgRating: req.body.avgRating,
+    numberOfGames: req.body.numberOfGames,
+    totalWords: req.body.totalWords,
+    avgWordLength: req.body.avgWordLength,
+    avgWordScore: req.body.avgWordScore,
+    updated:(new Date()).toString()};
+  if (req.body.name){
+    value["name"] = req.body.name;  
+  }
+    console.log("PROFILE : " + JSON.stringify(value) )
+  ref.set(value);
+
+  res.end(JSON.stringify(req.body));
+});
+exports.getProfile = functions.https.onRequest(async (req, res) => {
+    
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Headers", "content-type");
+  console.log(req.body)
+  var userId = req.body.id;
+  var profile = null;
+  admin.database().ref('/users/' + userId).once('value').then(function(snapshot) {
+    //var username = (snapshot.val() && snapshot.val().username) || 'Anonymous';
+    profile = snapshot.val();
+    res.end(JSON.stringify(profile));
+  });
+
+
+
+});
+
+exports.privacy = functions.https.onRequest(async (req, res) => {
+    
+  res.sendFile(__dirname + '/privacy_policy.html');
+
+
+
 });
   /*exports.makeUppercase = functions.database.ref('/messages/{pushId}/original')
   .onCreate((snapshot, context) => {
