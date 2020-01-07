@@ -7,7 +7,7 @@ admin.initializeApp();
 
 const raw = fs.readFileSync('./tdk.json');
 const dict = JSON.parse(raw);
-const version = 20;
+const version = 21;
 // Take the text parameter passed to this HTTP endpoint and insert it into the
 // Realtime Database under the path /messages/:pushId/original
 exports.dict = functions.https.onRequest(async (req, res) => {
